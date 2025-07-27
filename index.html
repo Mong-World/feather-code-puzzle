@@ -96,6 +96,32 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Timeout Overlay */
+    #timeoutOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      color: #ff4141;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 1000;
+      flex-direction: column;
+      padding: 40px;
+      font-size: 1.5em;
+    }
+
+    #timeoutOverlay span {
+      font-size: 2em;
+      color: #ffd900;
+      margin-top: 20px;
+    }
+
   </style>
 </head>
 <body>
@@ -131,6 +157,12 @@
 
   <button id="completeBtn">💥 I have achieved enlightenment</button>
 
+  <div id="timeoutOverlay">
+    🚫 That’s too many wrong answers.<br>
+    This is <strong>The Very Serious Certification Quiz™</strong>.<br>
+    You are timed out for <span id="countdown">30</span> seconds.
+  </div>
+
   <script>
     const correctAnswers = {
       q1: "Naked Mole Rat",
@@ -140,32 +172,67 @@
 
     const questionOrder = ["q1", "q2", "q3"];
     let userAnswers = {};
+    let wrongAttempts = { q1: 0, q2: 0, q3: 0 };
+    let timeoutActive = false;
+
+    function disableInputs(disabled) {
+      document.querySelectorAll("input[type=radio]").forEach(input => {
+        input.disabled = disabled;
+      });
+    }
+
+    function startTimeout() {
+      timeoutActive = true;
+      disableInputs(true);
+      document.getElementById("timeoutOverlay").style.display = "flex";
+      let countdown = 30;
+      document.getElementById("countdown").textContent = countdown;
+
+      const timer = setInterval(() => {
+        countdown--;
+        document.getElementById("countdown").textContent = countdown;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          timeoutActive = false;
+          disableInputs(false);
+          document.getElementById("timeoutOverlay").style.display = "none";
+        }
+      }, 1000);
+    }
 
     questionOrder.forEach((qid, index) => {
       const radios = document.querySelectorAll(`input[name=${qid}]`);
       radios.forEach(radio => {
         radio.addEventListener('change', () => {
+          if (timeoutActive) return;
+
           const selected = radio.value;
           const feedbackEl = document.getElementById("f" + (index + 1));
+
           if (selected === correctAnswers[qid]) {
             feedbackEl.textContent = "✅ Correct!";
             feedbackEl.className = "feedback correct";
             userAnswers[qid] = selected;
 
-            // Show next question if any
             const nextQ = questionOrder[index + 1];
             if (nextQ) {
               document.getElementById(nextQ).classList.add("active");
             }
 
-            // If all correct, show button
-            if (Object.keys(userAnswers).length === 3 &&
-                Object.entries(correctAnswers).every(([q, a]) => userAnswers[q] === a)) {
+            if (
+              Object.keys(userAnswers).length === 3 &&
+              Object.entries(correctAnswers).every(([q, a]) => userAnswers[q] === a)
+            ) {
               document.getElementById("completeBtn").style.display = "inline-block";
             }
           } else {
+            wrongAttempts[qid]++;
             feedbackEl.textContent = "❌ Hmm... no.";
             feedbackEl.className = "feedback";
+
+            if (wrongAttempts[qid] > 2 && !timeoutActive) {
+              startTimeout();
+            }
           }
         });
       });
@@ -177,8 +244,7 @@
         TaskTargetState: "SetAnyToCompleted"
       };
       PortalsSdk.sendMessageToUnity(JSON.stringify(message));
-      // Optional: close iframe
-      // PortalsSdk.closeIframe();
+      // Optional: PortalsSdk.closeIframe();
     });
   </script>
 </body>
