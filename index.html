@@ -37,13 +37,23 @@
       const msg = {
         source: "portals-iframe",
         taskUpdate: {
-          taskId: "gateup", // Double check this task ID in Portals
-          state: "Completed"
+         {
+  "TaskName": "gateup",           // e.g., "level1_intro"
+  "TaskTargetState": "SetAnyToCompleted"     // see valid values below
+}
         }
+        const message = {
+  TaskName: "gateup",
+  TaskTargetState: "SetActiveToCompleted"
+};
+
+PortalsSdk.sendMessageToUnity(JSON.stringify(message));
       };
       parent.postMessage(msg, "*");
       document.getElementById("status").textContent = "Message sent to Portals.";
     }
+    <script src="https://portals-labs.github.io/portals-sdk/portals-sdk.js?v=10005456"></script>
+  <button onclick="PortalsSdk.closeIframe()">Close</button>
   </script>
 </body>
 </html>
