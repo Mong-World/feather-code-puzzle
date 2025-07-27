@@ -1,59 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Task Update</title>
-  <style>
-    body {
-      background: #111;
-      color: white;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+  <script src="https://portals-labs.github.io/portals-sdk/portals-sdk.js?v=10005456"></script>
+  <script>
+    function completeGateupTask() {
+      const message = {
+        TaskName: "gateup",
+        TaskTargetState: "SetAnyToCompleted"  // or "SetNotActiveToCompleted" depending on your workflow
+      };
+      PortalsSdk.sendMessageToUnity(JSON.stringify(message));
+      // Optionally close the iframe after sending the message
+      // PortalsSdk.closeIframe();
     }
-    button {
-      padding: 1em 2em;
-      font-size: 1.2em;
-      background-color: #7effa7;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    #status {
-      margin-top: 20px;
-      font-size: 1em;
-    }
-  </style>
+  </script>
 </head>
 <body>
-  <h1>Portals Task Test</h1>
-  <button onclick="sendTask()">Activate 'gate up'</button>
-  <div id="status"></div>
-
-  <script>
-    function sendTask() {
-      const msg = {
-        source: "portals-iframe",
-        taskUpdate: {
-         {
-  "TaskName": "gateup",           // e.g., "level1_intro"
-  "TaskTargetState": "SetAnyToCompleted"     // see valid values below
-}
-        }
-        const message = {
-  TaskName: "gateup",
-  TaskTargetState: "SetActiveToCompleted"
-};
-
-PortalsSdk.sendMessageToUnity(JSON.stringify(message));
-      };
-      parent.postMessage(msg, "*");
-      document.getElementById("status").textContent = "Message sent to Portals.";
-    }
-    <script src="https://portals-labs.github.io/portals-sdk/portals-sdk.js?v=10005456"></script>
-  <button onclick="PortalsSdk.closeIframe()">Close</button>
-  </script>
+  <h1>Test Task Completion</h1>
+  <button onclick="completeGateupTask()">Complete Gateup Task</button>
 </body>
 </html>
