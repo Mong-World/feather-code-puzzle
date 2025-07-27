@@ -1,21 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <title>The Very Serious Certification Quiz</title>
   <script src="https://portals-labs.github.io/portals-sdk/portals-sdk.js?v=10005456"></script>
-  <script>
-    function completeGateupTask() {
-      const message = {
-        TaskName: "gateup",
-        TaskTargetState: "SetAnyToCompleted"  // or "SetNotActiveToCompleted" depending on your workflow
-      };
-      PortalsSdk.sendMessageToUnity(JSON.stringify(message));
-      // Optionally close the iframe after sending the message
-      // PortalsSdk.closeIframe();
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'VT323', monospace;
+      background: #f9f4e7;
+      color: #222;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
     }
-  </script>
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+
+    .question {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .question p {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      padding: 6px 0;
+      cursor: pointer;
+    }
+
+    .feedback {
+      font-size: 1em;
+      margin-top: 10px;
+      color: #d11;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    button {
+      font-size: 1.4em;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background-color: #aaa;
+      color: white;
+      cursor: not-allowed;
+      transition: all 0.3s ease;
+    }
+
+    button.active {
+      background-color: #ffd900;
+      color: black;
+      cursor: pointer;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0.6); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 217, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0); }
+    }
+  </style>
 </head>
 <body>
-  <h1>Test Task Completion</h1>
-  <button onclick="completeGateupTask()">Complete Gateup Task</button>
+  <h1>🤔 The Very Serious Certification Quiz</h1>
+
+  <div class="question" data-question="1">
+    <p>1) In OMNIPIGEON, what species of rodent helped you to escape the lab?</p>
+    <label><input type="radio" name="q1" value="Capybara"> Capybara</label>
+    <label><input type="radio" name="q1" value="Fancy Rat"> Fancy Rat</label>
+    <label><input type="radio" name="q1" value="Naked Mole Rat"> Naked Mole Rat ✅</label>
+    <label><input type="radio" name="q1" value="Sewer Ferret"> Sewer Ferret</label>
+    <div class="feedback" id="f1"></div>
+  </div>
+
+  <div class="question" data-question="2">
+    <p>2) What is the natural predator of a godlike pigeon?</p>
+    <label><input type="radio" name="q2" value="Bread"> Bread</label>
+    <label><input type="radio" name="q2" value="Laser Squirrel"> Laser Squirrel</label>
+    <label><input type="radio" name="q2" value="None. It fears nothing."> None. It fears nothing. ✅</label>
+    <label><input type="radio" name="q2" value="Vacuum Cleaner"> Vacuum Cleaner</label>
+    <div class="feedback" id="f2"></div>
+  </div>
+
+  <div class="question" data-question="3">
+    <p>3) What is the primary export of Moof Studios?</p>
+    <label><input type="radio" name="q3" value="Corn"> Corn</label>
+    <label><input type="radio" name="q3" value="Regret"> Regret</label>
+    <label><input type="radio" name="q3" value="Games with questionable sanity"> Games with questionable sanity ✅</label>
+    <label><input type="radio" name="q3" value="NFTs shaped like sandwiches"> NFTs shaped like sandwiches</label>
+    <div class="feedback" id="f3"></div>
+  </div>
+
+  <button id="completeBtn" disabled>💤 Answer the questions first...</button>
+
+  <script>
+    const correctAnswers = {
+      q1: "Naked Mole Rat",
+      q2: "None. It fears nothing.",
+      q3: "Games with questionable sanity"
+    };
+
+    const feedbackMap = {
+      correct: "✅ Correct!",
+      wrong: "❌ Hmm... no."
+    };
+
+    let userAnswers = {};
+
+    function checkAnswers() {
+      let allCorrect = true;
+      for (let key in correctAnswers) {
+        const val = userAnswers[key];
+        const feedbackEl = document.getElementById("f" + key.slice(1));
+        if (val === correctAnswers[key]) {
+          feedbackEl.textContent = feedbackMap.correct;
+          feedbackEl.className = "feedback correct";
+        } else {
+          feedbackEl.textContent = feedbackMap.wrong;
+          feedbackEl.className = "feedback";
+          allCorrect = false;
+        }
+      }
+
+      const btn = document.getElementById("completeBtn");
+      if (allCorrect) {
+        btn.disabled = false;
+        btn.classList.add("active");
+        btn.textContent = "💥 I have achieved enlightenment";
+      } else {
+        btn.disabled = true;
+        btn.classList.remove("active");
+        btn.textContent = "💤 Answer the questions first...";
+      }
+    }
+
+    document.querySelectorAll("input[type=radio]").forEach((input) => {
+      input.addEventListener("change", (e) => {
+        const name = e.target.name;
+        userAnswers[name] = e.target.value;
+        checkAnswers();
+      });
+    });
+
+    document.getElementById("completeBtn").addEventListener("click", () => {
+      const message = {
+        TaskName: "gateup",
+        TaskTargetState: "SetAnyToCompleted"
+      };
+      PortalsSdk.sendMessageToUnity(JSON.stringify(message));
+      // Optional: close the iframe
+      // PortalsSdk.closeIframe();
+    });
+  </script>
 </body>
 </html>
