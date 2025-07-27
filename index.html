@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feather Code Puzzle</title>
+  <style>
+    body {
+      background-color: #0d0f1a;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #7effa7;
+    }
+    .feather {
+      width: 60px;
+      height: 100px;
+      border-radius: 10px;
+      margin: 10px;
+      display: inline-block;
+      cursor: pointer;
+    }
+    #feathers {
+      margin-bottom: 20px;
+    }
+    .slot {
+      width: 60px;
+      height: 100px;
+      border: 2px dashed #555;
+      display: inline-block;
+      margin: 10px;
+      vertical-align: top;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #ffd369;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #7effa7;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Feather Code Terminal</h1>
+  <p>"Order matters: Sunlight, Slime, Sky."</p>
+  <div id="feathers">
+    <div class="feather" draggable="true" style="background-color: yellow;" data-color="yellow"></div>
+    <div class="feather" draggable="true" style="background-color: green;" data-color="green"></div>
+    <div class="feather" draggable="true" style="background-color: blue;" data-color="blue"></div>
+  </div>
+
+  <div id="slots">
+    <div class="slot" data-index="0"></div>
+    <div class="slot" data-index="1"></div>
+    <div class="slot" data-index="2"></div>
+  </div>
+
+  <button onclick="checkCode()">Submit</button>
+  <div id="result"></div>
+
+  <script>
+    const correctOrder = ["yellow", "green", "blue"];
+    const slots = document.querySelectorAll('.slot');
+    let dragged;
+
+    document.querySelectorAll('.feather').forEach(f => {
+      f.addEventListener('dragstart', (e) => {
+        dragged = e.target;
+      });
+    });
+
+    slots.forEach(slot => {
+      slot.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+
+      slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (slot.firstChild) slot.removeChild(slot.firstChild);
+        const clone = dragged.cloneNode();
+        clone.setAttribute('draggable', 'false');
+        slot.appendChild(clone);
+      });
+    });
+
+    function checkCode() {
+      const attempt = Array.from(slots).map(s => {
+        if (s.firstChild) return s.firstChild.dataset.color;
+        return null;
+      });
+
+      if (JSON.stringify(attempt) === JSON.stringify(correctOrder)) {
+        document.getElementById('result').textContent = "Access Granted!";
+
+        parent.postMessage({
+          source: "portals-iframe",
+          taskUpdate: {
+            taskId: "gate up",
+            state: "active"
+          }
+        }, "*");
+      } else {
+        document.getElementById('result').textContent = "Incorrect sequence. Try again.";
+      }
+    }
+  </script>
+</body>
+</html>
