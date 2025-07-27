@@ -4,109 +4,132 @@
   <meta charset="UTF-8" />
   <title>The Very Serious Certification Quiz</title>
   <script src="https://portals-labs.github.io/portals-sdk/portals-sdk.js?v=10005456"></script>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'VT323', monospace;
-      background: #f9f4e7;
-      color: #222;
-      max-width: 600px;
+      font-family: 'Bungee', sans-serif;
+      background: #000;
+      color: #39ff14;
+      max-width: 700px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 30px;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 30px;
+      font-size: 2.2em;
+      margin-bottom: 40px;
+      color: #ff00ff;
+      text-shadow: 0 0 5px #ff00ff;
     }
 
     .question {
-      background: #fff;
+      display: none;
+      background: #111;
+      border: 2px solid #0ff;
       border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px #0ff;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .question.active {
+      display: block;
     }
 
     .question p {
-      font-size: 1.2em;
-      margin-bottom: 10px;
+      font-size: 1.3em;
+      color: #0ff;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      padding: 6px 0;
+      margin: 10px 0;
+      color: #fff;
       cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    label:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    input[type=radio] {
+      margin-right: 10px;
     }
 
     .feedback {
+      margin-top: 15px;
       font-size: 1em;
-      margin-top: 10px;
-      color: #d11;
+      color: #ff4141;
     }
 
     .correct {
-      color: green;
+      color: #00ff88;
     }
 
-    button {
+    #completeBtn {
+      display: none;
+      margin-top: 20px;
       font-size: 1.4em;
-      width: 100%;
-      padding: 15px;
+      padding: 15px 30px;
       border: none;
       border-radius: 10px;
-      background-color: #aaa;
-      color: white;
-      cursor: not-allowed;
-      transition: all 0.3s ease;
-    }
-
-    button.active {
-      background-color: #ffd900;
-      color: black;
+      background: #ffd900;
+      color: #000;
       cursor: pointer;
+      box-shadow: 0 0 15px #ffd900;
       animation: pulse 1s infinite;
     }
 
     @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0.6); }
-      70% { box-shadow: 0 0 0 10px rgba(255, 217, 0, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(255, 217, 0, 0); }
       100% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
+
   <h1>🤔 The Very Serious Certification Quiz</h1>
 
-  <div class="question" data-question="1">
+  <div class="question active" id="q1">
     <p>1) In OMNIPIGEON, what species of rodent helped you to escape the lab?</p>
-    <label><input type="radio" name="q1" value="Capybara"> Capybara</label>
-    <label><input type="radio" name="q1" value="Fancy Rat"> Fancy Rat</label>
-    <label><input type="radio" name="q1" value="Naked Mole Rat"> Naked Mole Rat ✅</label>
-    <label><input type="radio" name="q1" value="Sewer Ferret"> Sewer Ferret</label>
+    <label><input type="radio" name="q1" value="Capybara">Capybara</label>
+    <label><input type="radio" name="q1" value="Fancy Rat">Fancy Rat</label>
+    <label><input type="radio" name="q1" value="Naked Mole Rat">Naked Mole Rat</label>
+    <label><input type="radio" name="q1" value="Sewer Ferret">Sewer Ferret</label>
     <div class="feedback" id="f1"></div>
   </div>
 
-  <div class="question" data-question="2">
+  <div class="question" id="q2">
     <p>2) What is the natural predator of a godlike pigeon?</p>
-    <label><input type="radio" name="q2" value="Bread"> Bread</label>
-    <label><input type="radio" name="q2" value="Laser Squirrel"> Laser Squirrel</label>
-    <label><input type="radio" name="q2" value="None. It fears nothing."> None. It fears nothing. ✅</label>
-    <label><input type="radio" name="q2" value="Vacuum Cleaner"> Vacuum Cleaner</label>
+    <label><input type="radio" name="q2" value="Bread">Bread</label>
+    <label><input type="radio" name="q2" value="Laser Squirrel">Laser Squirrel</label>
+    <label><input type="radio" name="q2" value="None. It fears nothing.">None. It fears nothing.</label>
+    <label><input type="radio" name="q2" value="Vacuum Cleaner">Vacuum Cleaner</label>
     <div class="feedback" id="f2"></div>
   </div>
 
-  <div class="question" data-question="3">
+  <div class="question" id="q3">
     <p>3) What is the primary export of Moof Studios?</p>
-    <label><input type="radio" name="q3" value="Corn"> Corn</label>
-    <label><input type="radio" name="q3" value="Regret"> Regret</label>
-    <label><input type="radio" name="q3" value="Games with questionable sanity"> Games with questionable sanity ✅</label>
-    <label><input type="radio" name="q3" value="NFTs shaped like sandwiches"> NFTs shaped like sandwiches</label>
+    <label><input type="radio" name="q3" value="Corn">Corn</label>
+    <label><input type="radio" name="q3" value="Regret">Regret</label>
+    <label><input type="radio" name="q3" value="Games with questionable sanity">Games with questionable sanity</label>
+    <label><input type="radio" name="q3" value="NFTs shaped like sandwiches">NFTs shaped like sandwiches</label>
     <div class="feedback" id="f3"></div>
   </div>
 
-  <button id="completeBtn" disabled>💤 Answer the questions first...</button>
+  <button id="completeBtn">💥 I have achieved enlightenment</button>
 
   <script>
     const correctAnswers = {
@@ -115,45 +138,36 @@
       q3: "Games with questionable sanity"
     };
 
-    const feedbackMap = {
-      correct: "✅ Correct!",
-      wrong: "❌ Hmm... no."
-    };
-
+    const questionOrder = ["q1", "q2", "q3"];
     let userAnswers = {};
 
-    function checkAnswers() {
-      let allCorrect = true;
-      for (let key in correctAnswers) {
-        const val = userAnswers[key];
-        const feedbackEl = document.getElementById("f" + key.slice(1));
-        if (val === correctAnswers[key]) {
-          feedbackEl.textContent = feedbackMap.correct;
-          feedbackEl.className = "feedback correct";
-        } else {
-          feedbackEl.textContent = feedbackMap.wrong;
-          feedbackEl.className = "feedback";
-          allCorrect = false;
-        }
-      }
+    questionOrder.forEach((qid, index) => {
+      const radios = document.querySelectorAll(`input[name=${qid}]`);
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const selected = radio.value;
+          const feedbackEl = document.getElementById("f" + (index + 1));
+          if (selected === correctAnswers[qid]) {
+            feedbackEl.textContent = "✅ Correct!";
+            feedbackEl.className = "feedback correct";
+            userAnswers[qid] = selected;
 
-      const btn = document.getElementById("completeBtn");
-      if (allCorrect) {
-        btn.disabled = false;
-        btn.classList.add("active");
-        btn.textContent = "💥 I have achieved enlightenment";
-      } else {
-        btn.disabled = true;
-        btn.classList.remove("active");
-        btn.textContent = "💤 Answer the questions first...";
-      }
-    }
+            // Show next question if any
+            const nextQ = questionOrder[index + 1];
+            if (nextQ) {
+              document.getElementById(nextQ).classList.add("active");
+            }
 
-    document.querySelectorAll("input[type=radio]").forEach((input) => {
-      input.addEventListener("change", (e) => {
-        const name = e.target.name;
-        userAnswers[name] = e.target.value;
-        checkAnswers();
+            // If all correct, show button
+            if (Object.keys(userAnswers).length === 3 &&
+                Object.entries(correctAnswers).every(([q, a]) => userAnswers[q] === a)) {
+              document.getElementById("completeBtn").style.display = "inline-block";
+            }
+          } else {
+            feedbackEl.textContent = "❌ Hmm... no.";
+            feedbackEl.className = "feedback";
+          }
+        });
       });
     });
 
@@ -163,7 +177,7 @@
         TaskTargetState: "SetAnyToCompleted"
       };
       PortalsSdk.sendMessageToUnity(JSON.stringify(message));
-      // Optional: close the iframe
+      // Optional: close iframe
       // PortalsSdk.closeIframe();
     });
   </script>
